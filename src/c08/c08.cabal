@@ -1,0 +1,93 @@
+cabal-version:   3.4
+name:            c08
+version:         0.1.0.0
+
+-- synopsis:
+-- description:
+license:         Apache-2.0
+license-file:    LICENSE
+author:          kayvan
+maintainer:      kayvan@q2io.com
+
+-- copyright:
+build-type:      Simple
+extra-doc-files: CHANGELOG.md
+
+-- extra-source-files:
+
+common base
+  build-depends: base >=4.9 && <5
+
+common project-config
+  default-language:   GHC2021
+  default-extensions:
+    DeriveGeneric
+    ExplicitForAll
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    InstanceSigs
+    LambdaCase
+    MultiParamTypeClasses
+    NamedFieldPuns
+    NumericUnderscores
+    OverloadedStrings
+    RecordWildCards
+    ScopedTypeVariables
+    TemplateHaskell
+
+  ghc-options:
+    -Wall -Wcompat -Wincomplete-record-updates
+    -Wincomplete-uni-patterns -Wredundant-constraints -Wunused-packages
+    -fno-warn-name-shadowing
+
+-- -ddump-derive
+
+library
+  import:          base, project-config
+  exposed-modules:
+    C08.Async
+    C08.Async2
+
+  -- other-modules:
+  -- other-extensions:
+  hs-source-dirs:  src
+  build-depends:
+    , array
+    , bytestring
+    , containers
+    , HTTP
+    , http-conduit
+    , mtl
+    , network
+    , network-run
+    , parallel
+    , stm
+    , text
+    , time
+    , transformers
+
+  -------------------------
+  -- internal dependencies
+  -------------------------
+  build-depends:   local-utils
+
+executable c08
+  import:         base, project-config
+  main-is:        Main.hs
+
+  -- other-modules:
+  -- other-extensions:
+  build-depends:  c08
+  hs-source-dirs: app
+
+test-suite c08-test
+  import:         base, project-config
+
+  -- other-modules:
+  -- other-extensions:
+  type:           exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is:        Main.hs
+  build-depends:  c08
