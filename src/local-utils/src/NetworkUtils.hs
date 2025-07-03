@@ -1,7 +1,9 @@
-module NetworkUtils where
+module NetworkUtils (
+  listenOn,
+  accept,
+) where
 
 import Control.Exception (bracket, bracketOnError)
-import Data.List.NonEmpty qualified as NE
 import Network.Run.TCP (openTCPServerSocket, resolve)
 import Network.Socket (
   AddrInfoFlag (AI_PASSIVE),

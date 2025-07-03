@@ -47,6 +47,7 @@ common project-config
 library
   import:          base, project-config
   exposed-modules:
+    C12.ChatClient
     C12.ChatServer
     C12.Server
     C12.STMServer
