@@ -1,5 +1,5 @@
 cabal-version:   3.4
-name:            c07
+name:            c010203
 version:         0.1.0.0
 
 -- synopsis:
@@ -47,20 +47,19 @@ common project-config
 library
   import:          base, project-config
   exposed-modules:
-    C07.Channel
-    C07.Logger
-    C07.Mvar
-    C07.PhoneBook
+    Rpar
+    Rpar0
+    Sudoku
+    Sudoku1
+    Sudoku2
+    Sudoku3
+    ThunkDemo
 
   hs-source-dirs:  src
   build-depends:
-    , bytestring
-    , containers
-    , HTTP
-    , http-conduit
-    , network
-    , network-run
-    , text
+    , array
+    , deepseq
+    , parallel
     , time
 
   -------------------------
@@ -68,21 +67,11 @@ library
   -------------------------
   build-depends:   local-utils
 
-executable c07
+executable c010203
   import:         base, project-config
   main-is:        Main.hs
 
   -- other-modules:
   -- other-extensions:
-  build-depends:  c07
+  build-depends:  c010203
   hs-source-dirs: app
-
-test-suite c07-test
-  import:         base, project-config
-
-  -- other-modules:
-  -- other-extensions:
-  type:           exitcode-stdio-1.0
-  hs-source-dirs: test
-  main-is:        Main.hs
-  build-depends:  c07

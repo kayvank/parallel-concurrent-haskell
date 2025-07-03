@@ -1,0 +1,99 @@
+#+title: Parallel and Concurrent Programming in Haskell
+#+athor: Kayvan
+
+* Parallel and Concurrent Programming in Haskell
+** Chapter 1
+Introduction
+*** Parallelism
+A parallel program is one that uses multiplicity of computations hardware
++ Most Haskell parallel programs are deterministic
+*** Concurrency
++ A program structuring technique where:
+  + there are multiple threads of control
+  + interacts with multiple independent agents
+  + structuring technique for effectful code
+  + nondeterministic
+*** Tools and Resources
+For the next 3 chapters we use:
++ [[../../nix/shell.nix][threadscope]]
++ [[./src/Sudoku.hs][Sudoku.hs]]
+** Chapter 2
+Basic Parallelism: The Eval Monad
+*** lazy Evaluation and WHNF
+When adding parallelism to our code
++ we are telling the compiler some things about how our program should run
+  + certain things should run in parallel
+Therefor it helps to have a good intuition of laziness
+
+**** Weak Head Normal Form
+***** WHN
+evaluated to the first constructor
+***** thunk
+object in memory representing the unevaluated computation
+***** Demo
+bring up ~ghci~ and load [[./src/ThunkDemo.hs][ThunkDemo]]
+#+begin_src shell
+cabal repl parallel-haskell
+#+end_src
+**** [[https://hackage-content.haskell.org/package/parallel-3.2.2.0/docs/Control-Parallel-Strategies.html#t:Eval][Eval]] Monad
+Parallelism is expressed using the Eval monad, which comes with two operations
+and rseq.
++ rpar combinator creates parallelism
+***** rseq combinator forces sequential evaluation
+**** Demos,
+*****  Fibonacci function
+[[./src/rpar.hs][rpar]]
+
+#+begin_src
+ghc -O2 rpar.hs -threaded
+./rpar 1 +RTS -N2
+#+end_src
++ The +RTS -N2 flag tells GHC to use two cores to run the program
++ In order to use parallelism with GHC, we have to use the -threaded option
+*****  Sudoku Solver
++ no parallelism
+  [[./src/sudoku1.hs][sudoku1]]
+#+begin_src
+ghc -O2 sudoku1.hs -rtsopts
+./sudoku1 sudoku17.1000.txt +RTS -s
+#+end_src
++ The argument +RTS -s instructs the GHC runtime system to emit the statistics shown
+
+  + Total time is given in two formats:
+    + total CPU time
+    + elapsed time, wall-clock time
+
++ parallelism
+  [[./src/sudoku2.hs][sudoku2]]
+  + ~force~
+#+begin_src
+ghc -O2 sudoku2.hs -rtsopts -threaded
+./sudoku2 sudoku17.1000.txt +RTS -N2 -s
+#+end_src
+
++ parallelism, with threadsope
+#+begin_src
+rm sudoku2; ghc -O2 sudoku2.hs -threaded -rtsopts -eventlog
+./sudoku2 sudoku17.1000.txt +RTS -N2 -l
+threadscope ./sudoku2.eventlog
+#+end_src
+
++ parallelism, ~parMap~
+  + static partitioning
+    fixed division of work
+  + dynamic partitioning
+    distributing small units of work
+**** DeepSeq
+***** NFData class
+#+begin_src haskell
+class NFData a where
+rnf :: a -> ()
+rnf a = a `seq` ()
+#+end_src
+normal-form data
+where normal-form is a value with no unevaluated  sub-expressions
+"data" because it isn’t possible to put a function in normal form
+** Chapter 3
+Evaluation Strategies
+*** Evaluation Strategies
+Or simply Strategies are a means to modularize parallel code by separating the algorithm from the parallelism
